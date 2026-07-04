@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Wandering Earth</title>
+    <title>流浪地球 | Wandering Earth</title>
   </head>
   <body>
     <main id="app">
@@ -12,8 +12,11 @@
       <section id="startOverlay" class="overlay is-visible">
         <div class="title-block">
           <p id="levelKicker" class="kicker">第一关 · 引力链</p>
-          <h1>Wandering Earth</h1>
-          <p class="tagline">用切线喷射穿过星群，撞碎小行星，让地球在宇宙中越滚越大。</p>
+          <h1>
+            <span class="title-cn">流浪地球</span>
+            <span class="title-en">Wandering Earth</span>
+          </h1>
+          <p class="tagline">点燃行星发动机穿过星群，撞碎小行星，让地球在宇宙中越滚越大。</p>
           <div id="levelSelect" class="level-select" aria-label="选择关卡"></div>
           <button id="startButton" class="primary-button" type="button">开始漂流</button>
         </div>
@@ -24,23 +27,32 @@
           <p id="resultKicker" class="kicker">结果</p>
           <h2 id="resultTitle">航线结束</h2>
           <p id="resultBody">地球离开了可观测宇宙。</p>
-          <button id="restartButton" class="primary-button" type="button">重新开始</button>
+          <div class="result-actions">
+            <button id="nextLevelButton" class="primary-button" type="button" hidden>下一关</button>
+            <button id="restartButton" class="secondary-button" type="button">重新开始</button>
+            <button id="titleButton" class="secondary-button" type="button" hidden>返回标题</button>
+          </div>
         </div>
       </section>
 
       <section id="hud" class="hud" aria-live="polite">
-        <div class="objective-chip">
-          <span id="objectiveText">吞噬碎星</span>
-          <span id="orbitText">等待发射</span>
-        </div>
-        <div class="status-strip">
-          <span id="massText">M 1.00</span>
-          <span id="diameterText">D x1.00</span>
-          <span id="shardText">0 / 8</span>
+        <div class="hud-top">
+          <div class="objective-chip">
+            <span id="objectiveText">吞噬碎星</span>
+            <span id="orbitText">等待发射</span>
+          </div>
+          <div class="mass-readout">
+            <span class="mass-label">当前质量</span>
+            <span id="massText">M 1.00</span>
+          </div>
+          <div class="status-strip">
+            <span id="diameterText">D x1.00</span>
+            <span id="shardText">0 / 8</span>
+          </div>
         </div>
         <div id="prompt" class="prompt">
           <span class="keycap">SPACE</span>
-          <span id="promptText">切线喷射</span>
+          <span id="promptText">行星发动机</span>
         </div>
         <button id="touchThrust" class="touch-thrust" type="button" aria-label="thrust">
           <span></span>

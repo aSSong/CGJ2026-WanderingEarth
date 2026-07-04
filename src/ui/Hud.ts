@@ -4,6 +4,8 @@ import type { LevelDefinition } from "../game/level";
 type HudCallbacks = {
   onStart: () => void;
   onRestart: () => void;
+  onNextLevel: () => void;
+  onBackToTitle: () => void;
   onSelectLevel: (index: number) => void;
 };
 
@@ -14,6 +16,8 @@ export class Hud {
   private readonly levelSelect = this.requireElement<HTMLElement>("levelSelect");
   private readonly startButton = this.requireElement<HTMLButtonElement>("startButton");
   private readonly restartButton = this.requireElement<HTMLButtonElement>("restartButton");
+  private readonly nextLevelButton = this.requireElement<HTMLButtonElement>("nextLevelButton");
+  private readonly titleButton = this.requireElement<HTMLButtonElement>("titleButton");
   private readonly objectiveText = this.requireElement<HTMLElement>("objectiveText");
   private readonly orbitText = this.requireElement<HTMLElement>("orbitText");
   private readonly massText = this.requireElement<HTMLElement>("massText");
@@ -25,11 +29,14 @@ export class Hud {
   private readonly resultTitle = this.requireElement<HTMLElement>("resultTitle");
   private readonly resultBody = this.requireElement<HTMLElement>("resultBody");
   private readonly levelButtons: HTMLButtonElement[] = [];
+  private readonly levelCount: number;
 
+  private selectedLevelIndex = 0;
   private lastPhase: GameState["phase"] | null = null;
   private promptTimer = 0;
 
   constructor(callbacks: HudCallbacks, levels: readonly LevelDefinition[]) {
+    this.levelCount = levels.length;
     this.levelButtons = levels.map((level, index) => {
       const button = document.createElement("button");
       button.className = "level-option";
@@ -42,9 +49,12 @@ export class Hud {
 
     this.startButton.addEventListener("click", callbacks.onStart);
     this.restartButton.addEventListener("click", callbacks.onRestart);
+    this.nextLevelButton.addEventListener("click", callbacks.onNextLevel);
+    this.titleButton.addEventListener("click", callbacks.onBackToTitle);
   }
 
   setSelectedLevel(index: number, level: LevelDefinition): void {
+    this.selectedLevelIndex = index;
     this.levelKicker.textContent = level.name.replace("：", " · ");
     for (const [buttonIndex, button] of this.levelButtons.entries()) {
       button.classList.toggle("is-active", buttonIndex === index);
@@ -72,7 +82,7 @@ export class Hud {
     for (const event of events) {
       if (event.type === "lost") {
         this.resultKicker.textContent = "航线失败";
-        this.resultTitle.textContent = "地球飞出了屏幕";
+        this.resultTitle.textContent = "地球飞入了漆黑的宇宙";
         this.resultBody.textContent = `最终质量 M ${event.mass.toFixed(2)}，撞碎 ${event.shards} 颗星。`;
       }
       if (event.type === "earthCrash") {
@@ -87,7 +97,18 @@ export class Hud {
       }
     }
 
+    this.updateResultActions(state);
     this.lastPhase = state.phase;
+  }
+
+  private updateResultActions(state: GameState): void {
+    const hasNextLevel = this.selectedLevelIndex < this.levelCount - 1;
+    const isWon = state.phase === "won";
+    const isLost = state.phase === "lost";
+
+    this.restartButton.textContent = isWon ? "重玩本关" : "重新尝试";
+    this.nextLevelButton.hidden = !(isWon && hasNextLevel);
+    this.titleButton.hidden = !(isLost || (isWon && !hasNextLevel));
   }
 
   private updateStats(state: GameState): void {
@@ -105,17 +126,17 @@ export class Hud {
   private updatePrompt(state: GameState, events: GameEvent[], dt: number): void {
     if (state.earth.orbit && state.phase === "playing") {
       this.promptTimer = Math.max(this.promptTimer, 0.9);
-      this.promptText.textContent = "切线喷射";
+      this.promptText.textContent = "行星发动机";
     }
 
     for (const event of events) {
       if (event.type === "capture") {
         this.promptTimer = 1.25;
-        this.promptText.textContent = "切线喷射";
+        this.promptText.textContent = "行星发动机";
       }
       if (event.type === "release") {
         this.promptTimer = event.reason === "breakthrough" ? 1.4 : 0.45;
-        this.promptText.textContent = event.reason === "breakthrough" ? "质量突破" : "喷射中";
+        this.promptText.textContent = event.reason === "breakthrough" ? "质量突破" : "发动机点火";
       }
       if (event.type === "smash") {
         this.promptTimer = 0.9;

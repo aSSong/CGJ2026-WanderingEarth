@@ -21,8 +21,8 @@ let renderer = new UniverseRenderer(gameMount, currentLevel);
 let lastTime = performance.now();
 let hud: Hud;
 
-function selectLevel(index: number): void {
-  if (!LEVELS[index] || index === selectedLevelIndex) {
+function loadLevel(index: number, startImmediately: boolean): void {
+  if (!LEVELS[index]) {
     return;
   }
 
@@ -32,13 +32,26 @@ function selectLevel(index: number): void {
   simulation = new Simulation(currentLevel);
   renderer = new UniverseRenderer(gameMount, currentLevel);
   hud.setSelectedLevel(selectedLevelIndex, currentLevel);
+  if (startImmediately) {
+    simulation.start();
+  }
   hud.update(simulation.state, [], 0);
   lastTime = performance.now();
+}
+
+function selectLevel(index: number): void {
+  if (index === selectedLevelIndex) {
+    return;
+  }
+
+  loadLevel(index, false);
 }
 
 hud = new Hud({
   onStart: () => simulation.start(),
   onRestart: () => simulation.restart(),
+  onNextLevel: () => loadLevel(selectedLevelIndex + 1, true),
+  onBackToTitle: () => loadLevel(selectedLevelIndex, false),
   onSelectLevel: selectLevel,
 }, LEVELS);
 

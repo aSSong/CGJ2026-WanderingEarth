@@ -63,6 +63,8 @@ export class UniverseRenderer {
   private readonly earthAtmosphere: THREE.Mesh<THREE.SphereGeometry, THREE.MeshBasicMaterial>;
   private readonly earthMassLabel: MassLabel;
   private readonly earthGravityRing: THREE.LineLoop<THREE.BufferGeometry, THREE.LineBasicMaterial>;
+  private readonly orbitTetherGeometry = new THREE.BufferGeometry();
+  private readonly orbitTetherLine: THREE.Line<THREE.BufferGeometry, THREE.LineBasicMaterial>;
   private readonly flame: THREE.Sprite;
   private readonly trailGeometry = new THREE.BufferGeometry();
   private readonly trailLine: THREE.Line<THREE.BufferGeometry, THREE.LineBasicMaterial>;
@@ -130,6 +132,21 @@ export class UniverseRenderer {
     this.earthGravityRing = createCircleLine(1, "#4fe4ff", 0.34);
     this.earthGravityRing.position.z = 0.18;
     this.scene.add(this.earthGravityRing);
+
+    this.orbitTetherGeometry.setFromPoints([new THREE.Vector3(0, 0, 0.52), new THREE.Vector3(0, 0, 0.52)]);
+    this.orbitTetherLine = new THREE.Line(
+      this.orbitTetherGeometry,
+      new THREE.LineBasicMaterial({
+        color: "#8af5ff",
+        transparent: true,
+        opacity: 0,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false,
+      }),
+    );
+    this.orbitTetherLine.frustumCulled = false;
+    this.orbitTetherLine.visible = false;
+    this.scene.add(this.orbitTetherLine);
 
     this.flame = new THREE.Sprite(
       new THREE.SpriteMaterial({
@@ -437,6 +454,29 @@ export class UniverseRenderer {
     }
     this.trailGeometry.setFromPoints(this.trailPoints);
     this.trailLine.material.opacity = state.phase === "playing" ? 0.34 : 0.18;
+    this.updateOrbitTether(state);
+  }
+
+  private updateOrbitTether(state: GameState): void {
+    const orbit = state.earth.orbit;
+    if (!orbit || state.phase !== "playing") {
+      this.orbitTetherLine.visible = false;
+      return;
+    }
+
+    const planet = state.planets.find((candidate) => candidate.id === orbit.planetId);
+    if (!planet || !planet.alive) {
+      this.orbitTetherLine.visible = false;
+      return;
+    }
+
+    this.orbitTetherGeometry.setFromPoints([
+      new THREE.Vector3(state.earth.position.x, state.earth.position.y, 0.58),
+      new THREE.Vector3(planet.position.x, planet.position.y, 0.5),
+    ]);
+    this.orbitTetherLine.material.color.set(planet.palette.glow);
+    this.orbitTetherLine.material.opacity = 0.38 + Math.sin(this.time * 5.4) * 0.08;
+    this.orbitTetherLine.visible = true;
   }
 
   private updateFragments(fragments: FragmentState[]): void {

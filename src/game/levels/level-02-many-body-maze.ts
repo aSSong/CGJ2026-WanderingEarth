@@ -6,8 +6,8 @@ export const LEVEL_02_MANY_BODY_MAZE: LevelDefinition = {
   bounds: { x: 26, y: 14.6 },
   startPosition: { x: -24.1, y: -10.4 },
   startVelocity: { x: 4.35, y: 2.1 },
-  goalMass: 13.2,
-  goalShards: 15,
+  goalMass: 18.5,
+  goalShards: 18,
   planets: [
     {
       id: "dawn-giant",

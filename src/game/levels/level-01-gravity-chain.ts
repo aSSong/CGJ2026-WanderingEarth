@@ -6,8 +6,8 @@ export const LEVEL_01_GRAVITY_CHAIN: LevelDefinition = {
   bounds: { x: 23.5, y: 13.2 },
   startPosition: { x: -21.2, y: -8.3 },
   startVelocity: { x: 3.85, y: 1.86 },
-  goalMass: 6,
-  goalShards: 5,
+  goalMass: 8,
+  goalShards: 8,
   planets: [
     {
       id: "qixia",

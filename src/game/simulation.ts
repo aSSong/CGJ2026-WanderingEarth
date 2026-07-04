@@ -350,7 +350,7 @@ export class Simulation {
     earth.orbit = null;
     this.releaseCooldownId = orbit.planetId;
     this.releaseCooldown = reason === "breakthrough" ? 1.2 : 0.58;
-    this.state.lastMessage = reason === "breakthrough" ? "质量突破引力束缚" : "切线喷射";
+    this.state.lastMessage = reason === "breakthrough" ? "质量突破引力束缚" : "行星发动机点火";
 
     if (planet) {
       this.events.push({
@@ -528,7 +528,7 @@ export class Simulation {
       position.y > bounds.y + margin
     ) {
       this.state.phase = "lost";
-      this.state.lastMessage = "飞出屏幕";
+      this.state.lastMessage = "飞入了漆黑的宇宙";
       this.events.push({
         type: "lost",
         mass: this.state.earth.mass,
