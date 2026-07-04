@@ -1,5 +1,5 @@
 import { FIRST_LEVEL } from "./levels";
-import type { LevelDefinition, LevelPlanet } from "./level";
+import type { LevelDefinition, LevelPlanet, PlanetOrbitPath, PlanetRole } from "./level";
 import type { InputController } from "./input";
 import {
   add,
@@ -122,6 +122,22 @@ export function radiusForMass(mass: number): number {
   return 0.72 * Math.cbrt(Math.max(0.01, mass));
 }
 
+export function planetRadiusForMass(mass: number, role: PlanetRole): number {
+  const size = Math.cbrt(Math.max(0.01, mass));
+  return role === "anchor"
+    ? clamp(0.92 + size * 0.4, 1.22, 2.82)
+    : clamp(0.22 + size * 0.66, 0.42, 2.08);
+}
+
+export function planetOrbitPosition(path: PlanetOrbitPath, time: number): Vec2 {
+  const direction = path.direction ?? 1;
+  const angle = path.phase + path.angularSpeed * direction * time;
+  return {
+    x: path.center.x + Math.cos(angle) * path.radius,
+    y: path.center.y + Math.sin(angle) * path.radius,
+  };
+}
+
 export function diameterRatio(radius: number): number {
   return radius / INITIAL_RADIUS;
 }
@@ -178,6 +194,8 @@ export class Simulation {
       }
     }
 
+    this.updatePlanetMotion();
+
     if (this.state.earth.orbit) {
       this.updateOrbit(dt, input);
     } else {
@@ -207,7 +225,8 @@ export class Simulation {
       },
       planets: this.level.planets.map((planet) => ({
         ...planet,
-        position: cloneVec(planet.position),
+        position: planet.orbitPath ? planetOrbitPosition(planet.orbitPath, 0) : cloneVec(planet.position),
+        radius: planetRadiusForMass(planet.mass, planet.role),
         alive: true,
         brokenAt: null,
       })),
@@ -365,11 +384,25 @@ export class Simulation {
     }
   }
 
+  private updatePlanetMotion(): void {
+    for (const planet of this.state.planets) {
+      if (!planet.alive || !planet.orbitPath) {
+        continue;
+      }
+
+      planet.position = planetOrbitPosition(planet.orbitPath, this.state.time);
+    }
+  }
+
   private updateEarthAttraction(dt: number): void {
     const earth = this.state.earth;
 
     for (const planet of this.state.planets) {
       if (!planet.alive) {
+        continue;
+      }
+
+      if (planet.orbitPath) {
         continue;
       }
 

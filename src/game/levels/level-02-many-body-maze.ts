@@ -6,8 +6,8 @@ export const LEVEL_02_MANY_BODY_MAZE: LevelDefinition = {
   bounds: { x: 26, y: 14.6 },
   startPosition: { x: -24.1, y: -10.4 },
   startVelocity: { x: 4.35, y: 2.1 },
-  goalMass: 16,
-  goalShards: 15,
+  goalMass: 20,
+  goalShards: 17,
   planets: [
     {
       id: "dawn-giant",
@@ -57,7 +57,7 @@ export const LEVEL_02_MANY_BODY_MAZE: LevelDefinition = {
       name: "蓝门",
       role: "anchor",
       position: { x: 8.25, y: 6.25 },
-      mass: 20.4,
+      mass: 22.4,
       radius: 1.38,
       captureRadius: 6.35,
       palette: { base: "#6aa9ff", accent: "#90ffcf", glow: "#77c9ff" },
@@ -68,7 +68,7 @@ export const LEVEL_02_MANY_BODY_MAZE: LevelDefinition = {
       name: "赤锁",
       role: "anchor",
       position: { x: 14.9, y: -4.75 },
-      mass: 18.8,
+      mass: 22.8,
       radius: 1.28,
       captureRadius: 6.65,
       palette: { base: "#ff7168", accent: "#5b1d56", glow: "#ff9a7f" },

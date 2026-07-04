@@ -8,6 +8,14 @@ export type PlanetPalette = {
   glow: string;
 };
 
+export type PlanetOrbitPath = {
+  center: Vec2;
+  radius: number;
+  phase: number;
+  angularSpeed: number;
+  direction?: 1 | -1;
+};
+
 export type LevelPlanet = {
   id: string;
   name: string;
@@ -18,6 +26,7 @@ export type LevelPlanet = {
   captureRadius: number;
   palette: PlanetPalette;
   hasRing?: boolean;
+  orbitPath?: PlanetOrbitPath;
 };
 
 export type LevelDefinition = {

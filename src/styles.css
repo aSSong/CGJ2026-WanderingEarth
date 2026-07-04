@@ -246,7 +246,7 @@ h2 {
 }
 
 .objective-chip {
-  justify-self: start;
+  justify-self: end;
   display: grid;
   gap: 4px;
   max-width: min(280px, 30vw);
@@ -313,9 +313,10 @@ h2 {
   justify-self: end;
   display: flex;
   align-items: flex-start;
-  justify-content: flex-end;
+  justify-content: space-between;
   gap: 8px;
-  max-width: min(390px, 34vw);
+  width: 100%;
+  min-width: 0;
 }
 
 .status-strip {
@@ -323,6 +324,7 @@ h2 {
   align-items: center;
   justify-content: flex-end;
   gap: 8px;
+  flex: 0 1 auto;
   max-width: 100%;
   min-height: 42px;
   padding: 0 12px;
@@ -351,6 +353,7 @@ h2 {
   display: none;
   align-items: center;
   justify-content: center;
+  flex: 0 0 auto;
   min-height: 34px;
   border: 1px solid rgba(155, 237, 255, 0.26);
   border-radius: 8px;
@@ -494,6 +497,7 @@ body.is-playing .hud-title-button {
 
   .objective-chip {
     grid-area: objective;
+    justify-self: stretch;
     width: auto;
     max-width: none;
     padding: 10px 12px;

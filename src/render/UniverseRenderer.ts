@@ -1,6 +1,14 @@
 import * as THREE from "three";
 import type { LevelDefinition, LevelPlanet, PlanetPalette } from "../game/level";
-import { earthAttractionRadius, type FragmentState, type GameEvent, type GameState, type PlanetState } from "../game/simulation";
+import {
+  earthAttractionRadius,
+  planetOrbitPosition,
+  planetRadiusForMass,
+  type FragmentState,
+  type GameEvent,
+  type GameState,
+  type PlanetState,
+} from "../game/simulation";
 import { normalize, type Vec2 } from "../game/vector";
 
 type PlanetView = {
@@ -280,7 +288,11 @@ export class UniverseRenderer {
 
   private buildPlanets(): void {
     for (const planet of this.level.planets) {
-      const view = this.createPlanetView(planet);
+      const view = this.createPlanetView({
+        ...planet,
+        position: planet.orbitPath ? planetOrbitPosition(planet.orbitPath, 0) : planet.position,
+        radius: planetRadiusForMass(planet.mass, planet.role),
+      });
       this.planetViews.set(planet.id, view);
       this.scene.add(view.group);
     }
@@ -391,6 +403,8 @@ export class UniverseRenderer {
       }
 
       view.group.visible = planet.alive;
+      view.group.position.x = planet.position.x;
+      view.group.position.y = planet.position.y;
       view.body.rotation.y += 0.0026 + planet.radius * 0.0008;
       view.body.rotation.x = Math.sin(this.time * 0.22 + planet.radius) * 0.12;
       view.atmosphere.rotation.z -= 0.0016;
