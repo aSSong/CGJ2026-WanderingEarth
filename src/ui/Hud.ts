@@ -1,5 +1,6 @@
 import { diameterRatio, type GameEvent, type GameState } from "../game/simulation";
 import type { LevelDefinition } from "../game/level";
+import { length as vectorLength } from "../game/vector";
 
 type HudCallbacks = {
   onStart: () => void;
@@ -18,9 +19,12 @@ export class Hud {
   private readonly restartButton = this.requireElement<HTMLButtonElement>("restartButton");
   private readonly nextLevelButton = this.requireElement<HTMLButtonElement>("nextLevelButton");
   private readonly titleButton = this.requireElement<HTMLButtonElement>("titleButton");
+  private readonly gameTitleButton = this.requireElement<HTMLButtonElement>("gameTitleButton");
   private readonly objectiveText = this.requireElement<HTMLElement>("objectiveText");
   private readonly orbitText = this.requireElement<HTMLElement>("orbitText");
   private readonly massText = this.requireElement<HTMLElement>("massText");
+  private readonly goalMassText = this.requireElement<HTMLElement>("goalMassText");
+  private readonly speedText = this.requireElement<HTMLElement>("speedText");
   private readonly diameterText = this.requireElement<HTMLElement>("diameterText");
   private readonly shardText = this.requireElement<HTMLElement>("shardText");
   private readonly prompt = this.requireElement<HTMLElement>("prompt");
@@ -51,6 +55,7 @@ export class Hud {
     this.restartButton.addEventListener("click", callbacks.onRestart);
     this.nextLevelButton.addEventListener("click", callbacks.onNextLevel);
     this.titleButton.addEventListener("click", callbacks.onBackToTitle);
+    this.gameTitleButton.addEventListener("click", callbacks.onBackToTitle);
   }
 
   setSelectedLevel(index: number, level: LevelDefinition): void {
@@ -116,9 +121,11 @@ export class Hud {
       ? state.planets.find((planet) => planet.id === state.earth.orbit?.planetId)
       : null;
 
-    this.objectiveText.textContent = state.phase === "won" ? "关卡完成" : `目标 M ${state.level.goalMass.toFixed(1)}`;
+    this.objectiveText.textContent = state.phase === "won" ? "关卡完成" : "航线状态";
     this.orbitText.textContent = orbitPlanet ? `环绕 ${orbitPlanet.name}` : state.lastMessage;
     this.massText.textContent = `M ${state.earth.mass.toFixed(2)}`;
+    this.goalMassText.textContent = `M ${state.level.goalMass.toFixed(1)}`;
+    this.speedText.textContent = `V ${vectorLength(state.earth.velocity).toFixed(1)}`;
     this.diameterText.textContent = `D x${diameterRatio(state.earth.radius).toFixed(2)}`;
     this.shardText.textContent = `${state.stats.smashed} / ${state.level.goalShards}`;
   }

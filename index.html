@@ -42,12 +42,22 @@
             <span id="orbitText">等待发射</span>
           </div>
           <div class="mass-readout">
-            <span class="mass-label">当前质量</span>
-            <span id="massText">M 1.00</span>
+            <div class="mass-current">
+              <span class="mass-label">当前质量</span>
+              <span id="massText">M 1.00</span>
+            </div>
+            <div class="mass-goal">
+              <span class="mass-label">目标质量</span>
+              <span id="goalMassText">M 8.0</span>
+            </div>
           </div>
-          <div class="status-strip">
-            <span id="diameterText">D x1.00</span>
-            <span id="shardText">0 / 8</span>
+          <div class="hud-side">
+            <button id="gameTitleButton" class="hud-title-button" type="button">返回标题</button>
+            <div class="status-strip">
+              <span id="speedText">V 0.0</span>
+              <span id="diameterText">D x1.00</span>
+              <span id="shardText">0 / 8</span>
+            </div>
           </div>
         </div>
         <div id="prompt" class="prompt">
